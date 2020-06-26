@@ -1,30 +1,98 @@
-# customer-service project
+# Quarkus insights demo
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+## Creation
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+Using code.quarkus.io:
 
-## Running the application in dev mode
+- RESTEasy JAX-RS
+- RESTEasy JSON-B
+- SmallRye OpenAPI
+- SmallRye GraphQL
+- Also later OpenTracing, Metrics, Security
 
-You can run your application in dev mode that enables live coding using:
+## Context
+
+- Show Person size [javadoc](file:///home/pkruger/Projects/quarkus.io/customer-service/target/apidocs/graphql/demo/model/package-summary.html)
+- Draw use case [excalidraw](https://excalidraw.com/)
+
+## Queries
+- Basic REST Endpoint (person)
+- Convert to GraphQL (Show schema)
+- Add another service (score)
+- Convert to GraphQL (boundary)
+- Break score (partial results)
+- More that one person
+- List of people
+
+## Mutation
+
+Create: 
 ```
-./mvnw quarkus:dev
+mutation CreatePerson{
+  mutatePerson(person : 
+    {
+      names: "Phillip"
+    }
+  ){
+    id
+    names
+    surname
+    profilePictures
+    website
+  }
+}
 ```
 
-## Packaging and running the application
+Update:
 
-The application can be packaged using `./mvnw package`.
-It produces the `customer-service-1.0.0-SNAPSHOT-runner.jar` file in the `/target` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
+```
+mutation UpdatePerson{
+  mutatePerson(person : 
+    {
+      id: 11, 
+      names:"Phillip",
+      surname: "Kruger", 
+      profilePictures: [
+        "https://pbs.twimg.com/profile_images/1170690050524405762/I8KJ_hF4_400x400.jpg"
+      ],
+      website: "http://www.phillip-kruger.com"
+    }){
+    id
+    names
+    surname
+    profilePictures
+    website
+  }
+}
+```
 
-The application is now runnable using `java -jar target/customer-service-1.0.0-SNAPSHOT-runner.jar`.
+## Metrics
 
-## Creating a native executable
+```
+@Timed(name = "restTimer", description = "How long does it take to get a Customer.", unit = MetricUnits.SECONDS)
+@Timed(name = "graphQLTimer", description = "How long does it take to get a Customer.", unit = MetricUnits.SECONDS)
+```
 
-You can create a native executable using: `./mvnw package -Pnative`.
+[View here](moz-extension://1a06ab1b-bfdc-43de-9872-c41eb25e3afb/dist/index.html)
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
+## Security
 
-You can then execute your native executable with: `./target/customer-service-1.0.0-SNAPSHOT-runner`
+```
+@RolesAllowed("admin")
+```
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image.
+## Tracing
+
+docker run -p 5775:5775/udp -p 6831:6831/udp -p 6832:6832/udp -p 5778:5778 -p 16686:16686 -p 14268:14268 jaegertracing/all-in-one:latest
+http://localhost:16686/search
+
+## Client
+
+(Start server with java -jar)
+
+```
+//@Inject
+CustomerGraphQLClient graphQLClient = GraphQlClientBuilder.newBuilder().build(CustomerGraphQLClient.class);
+```
+
+# Introspection
