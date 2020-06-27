@@ -19,7 +19,20 @@ Using code.quarkus.io:
 - Basic REST Endpoint (person)
 - Convert to GraphQL (Show schema)
 - Add another service (score)
-- Convert to GraphQL (boundary)
+
+```
+    @Inject
+    ScoreDB scoreDB;
+    
+    @GET
+    @Path("/score/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Score> getScores(@PathParam("id") String id) {
+        return scoreDB.getScores(id);
+    }
+```
+
+- Convert to GraphQL (show boundary)
 - Break score (partial results)
 - More that one person
 - List of people
@@ -69,11 +82,17 @@ mutation UpdatePerson{
 ## Metrics
 
 ```
-@Timed(name = "restTimer", description = "How long does it take to get a Customer.", unit = MetricUnits.SECONDS)
-@Timed(name = "graphQLTimer", description = "How long does it take to get a Customer.", unit = MetricUnits.SECONDS)
+@Timed(name = "graphQLTimer", description = "How long does it take to get a Customer.", unit = MetricUnits.NANOSECONDS)
+@Counted(name = "personCount", description = "How many times did we ask for Person.")
+```
+```
+/opt/Metrics/prometheus-2.19.2.linux-amd64
+./start.sh
+sudo systemctl start grafana-server
 ```
 
-[View here](moz-extension://1a06ab1b-bfdc-43de-9872-c41eb25e3afb/dist/index.html)
+[View here](moz-extension://1a06ab1b-bfdc-43de-9872-c41eb25e3afb/dist/index.html) or 
+[Here](http://localhost:3000/d/T2kbtqZGk/microprofile-metrics-2020-06-27-19-49-33-utc?orgId=1&refresh=5s)
 
 ## Security
 
@@ -95,4 +114,4 @@ http://localhost:16686/search
 CustomerGraphQLClient graphQLClient = GraphQlClientBuilder.newBuilder().build(CustomerGraphQLClient.class);
 ```
 
-# Introspection
+## Introspection

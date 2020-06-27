@@ -15,7 +15,6 @@ public class PersonDB {
     
     private final Map<Integer,Person> personDatabase = Database.getPeopleSchema();
     
-    @Counted(name = "personCount", description = "How many times did we ask for Person.")
     public Person getPerson(Integer id){
         log.logf(Level.ERROR, "======= Getting person [{0}] =======", id);    
         return personDatabase.get(id);
