@@ -94,16 +94,18 @@ sudo systemctl start grafana-server
 [View here](moz-extension://1a06ab1b-bfdc-43de-9872-c41eb25e3afb/dist/index.html) or 
 [Here](http://localhost:3000/d/T2kbtqZGk/microprofile-metrics-2020-06-27-19-49-33-utc?orgId=1&refresh=5s)
 
+## Tracing
+
+```
+docker run -p 5775:5775/udp -p 6831:6831/udp -p 6832:6832/udp -p 5778:5778 -p 16686:16686 -p 14268:14268 jaegertracing/all-in-one:latest
+```
+[View](http://localhost:16686/search)
+
 ## Security
 
 ```
 @RolesAllowed("admin")
 ```
-
-## Tracing
-
-docker run -p 5775:5775/udp -p 6831:6831/udp -p 6832:6832/udp -p 5778:5778 -p 16686:16686 -p 14268:14268 jaegertracing/all-in-one:latest
-http://localhost:16686/search
 
 ## Client
 
@@ -112,6 +114,14 @@ http://localhost:16686/search
 ```
 //@Inject
 CustomerGraphQLClient graphQLClient = GraphQlClientBuilder.newBuilder().build(CustomerGraphQLClient.class);
+
+//...
+
+        Person graphQLPerson = graphQLClient.getPerson(id);
+        
+        System.err.println("================ GRAPHQL ================");
+        System.err.println(graphQLPerson);
+
 ```
 
 ## Introspection
